@@ -144,6 +144,23 @@ class ExcelFakeTest extends TestCase
     /**
      * @test
      */
+    public function can_assert_against_a_fake_raw_export()
+    {
+        ExcelFacade::fake();
+
+        $response = ExcelFacade::raw($this->givenExport(), \Maatwebsite\Excel\Excel::XLSX);
+
+        $this->assertIsString($response);
+
+        ExcelFacade::assertExportedInRaw(get_class($this->givenExport()));
+        ExcelFacade::assertExportedInRaw(get_class($this->givenExport()), function (FromCollection $export) {
+            return $export->collection()->contains('foo');
+        });
+    }
+
+    /**
+     * @test
+     */
     public function can_assert_against_a_fake_import()
     {
         ExcelFacade::fake();
@@ -218,6 +235,24 @@ class ExcelFakeTest extends TestCase
     /**
      * @test
      */
+    public function can_assert_against_a_fake_queued_import_with_chain()
+    {
+        ExcelFacade::fake();
+
+        ExcelFacade::queueImport(
+            $this->givenQueuedImport(), 'queued-filename.csv', 's3'
+        )->chain([
+            new ChainedJobStub(),
+        ]);
+
+        ExcelFacade::assertQueuedWithChain([
+            new ChainedJobStub(),
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function a_callback_can_be_passed_as_the_second_argument_when_asserting_against_a_faked_queued_export()
     {
         ExcelFacade::fake();
@@ -239,7 +274,8 @@ class ExcelFakeTest extends TestCase
      */
     private function givenExport()
     {
-        return new class implements FromCollection {
+        return new class implements FromCollection
+        {
             /**
              * @return Collection
              */
@@ -255,7 +291,8 @@ class ExcelFakeTest extends TestCase
      */
     private function givenQueuedExport()
     {
-        return new class implements FromCollection, ShouldQueue {
+        return new class implements FromCollection, ShouldQueue
+        {
             /**
              * @return Collection
              */
@@ -271,7 +308,8 @@ class ExcelFakeTest extends TestCase
      */
     private function givenImport()
     {
-        return new class implements ToModel {
+        return new class implements ToModel
+        {
             /**
              * @param array $row
              *
@@ -289,7 +327,8 @@ class ExcelFakeTest extends TestCase
      */
     private function givenQueuedImport()
     {
-        return new class implements ToModel, ShouldQueue {
+        return new class implements ToModel, ShouldQueue
+        {
             /**
              * @param array $row
              *

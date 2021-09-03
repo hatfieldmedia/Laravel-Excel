@@ -34,7 +34,8 @@ class SkipsOnFailureTest extends TestCase
      */
     public function can_skip_on_error()
     {
-        $import = new class implements ToModel, WithValidation, SkipsOnFailure {
+        $import = new class implements ToModel, WithValidation, SkipsOnFailure
+        {
             use Importable;
 
             public $failures = 0;
@@ -74,6 +75,10 @@ class SkipsOnFailureTest extends TestCase
                 Assert::assertEquals('1', $failure->attribute());
                 Assert::assertEquals(['The selected 1 is invalid.'], $failure->errors());
                 Assert::assertEquals(['Taylor Otwell', 'taylor@laravel.com'], $failure->values());
+                Assert::assertEquals(2, $failure->jsonSerialize()['row']);
+                Assert::assertEquals('1', $failure->jsonSerialize()['attribute']);
+                Assert::assertEquals(['The selected 1 is invalid.'], $failure->jsonSerialize()['errors']);
+                Assert::assertEquals(['Taylor Otwell', 'taylor@laravel.com'], $failure->jsonSerialize()['values']);
 
                 $this->failures += \count($failures);
             }
@@ -99,7 +104,8 @@ class SkipsOnFailureTest extends TestCase
      */
     public function skips_only_failed_rows_in_batch()
     {
-        $import = new class implements ToModel, WithValidation, WithBatchInserts, SkipsOnFailure {
+        $import = new class implements ToModel, WithValidation, WithBatchInserts, SkipsOnFailure
+        {
             use Importable;
 
             public $failures = 0;
@@ -171,7 +177,8 @@ class SkipsOnFailureTest extends TestCase
      */
     public function can_skip_failures_and_collect_all_failures_at_the_end()
     {
-        $import = new class implements ToModel, WithValidation, SkipsOnFailure {
+        $import = new class implements ToModel, WithValidation, SkipsOnFailure
+        {
             use Importable, SkipsFailures;
 
             /**
@@ -226,7 +233,8 @@ class SkipsOnFailureTest extends TestCase
      */
     public function can_validate_using_oneachrow_and_skipsonfailure()
     {
-        $import = new class implements OnEachRow, WithValidation, SkipsOnFailure {
+        $import = new class implements OnEachRow, WithValidation, SkipsOnFailure
+        {
             use Importable, SkipsFailures;
 
             /**
